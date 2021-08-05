@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
-  runApp(
-    MyApp(),
-  );
-}
+void main() => runApp(ProviderScope(child: MyApp()));
+
+final greetingProvider = Provider((ref) => 'Hellow Riverpod1!');
 
 class MyApp extends StatelessWidget {
   @override
@@ -16,34 +14,33 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text("Riverpod Tutorial"),
         ),
-        body: MyWidget(),
-      ),
-    );
-  }
-}
-
-class MyWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Provider(
-      create: (context) => MyFirstClass(),
-      child: ProxyProvider<MyFirstClass, MySecondClass>(
-        update: (context, firstClass, previous) => MySecondClass(firstClass),
-        child: Builder(
-          builder: (context) {
-            return Text(Provider.of<MySecondClass>(context).myFirstClass.value);
-          },
+        body: Center(
+          child: Consumer(builder: (context, watch, child) {
+            final greeting = watch(greetingProvider);
+            return Text(greeting);
+          }),
         ),
       ),
     );
   }
 }
 
-class MyFirstClass {
-  final value = "tharindu";
-}
+// Example 01
 
-class MySecondClass {
-  final MyFirstClass myFirstClass;
-  MySecondClass(this.myFirstClass);
-}
+// class MyApp extends ConsumerWidget {
+//   @override
+//   Widget build(BuildContext context, ScopedReader watch) {
+//     final greeting = watch(greetingProvider);
+//     return MaterialApp(
+//       title: 'Flutter Riverpod Tutorial',
+//       home: Scaffold(
+//         appBar: AppBar(
+//           title: Text("Riverpod Tutorial"),
+//         ),
+//         body: Center(
+//           child: Text(greeting),
+//         ),
+//       ),
+//     );
+//   }
+// }
